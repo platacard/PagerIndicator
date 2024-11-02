@@ -10,8 +10,21 @@ plugins {
     signing
 }
 
+// https://github.com/GoogleContainerTools/jib/issues/4235
+buildscript {
+    dependencies {
+        classpath("commons-codec:commons-codec:1.16.1")
+    }
+    configurations.all {
+        resolutionStrategy {
+            force("org.apache.commons:commons-compress:1.26.0")
+            force("commons-codec:commons-codec:1.16.1")
+        }
+    }
+}
+
 android {
-    namespace = "dif.tech.pagerindicator"
+    namespace = "mx.platacard.pagerindicator"
     compileSdk = 34
 
     defaultConfig {
@@ -33,13 +46,20 @@ dependencies {
     implementation(libs.compose.foundation)
 }
 
-if (!release) {
-    version = "$version-SNAPSHOT"
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
+
+version = properties["version"].toString()
 
 publishing {
     publications {
-        withType<MavenPublication> {
+        create<MavenPublication>("release") {
             groupId = "mx.platacard"
             artifactId = "compose-pager-indicator"
 
@@ -56,41 +76,65 @@ publishing {
                 developers {
                     developer {
                         name.set("Pavel Shnyakin")
-                        email.set("pavel.shnyakin@dif.tech")
+                        email.set("pavel.shnyakin@mx.platacard")
                     }
                 }
                 scm {
                     connection.set("scm:git:git://github.com/platacard/PagerIndicator.git")
                     developerConnection.set("scm:git:git://github.com/platacard/PagerIndicator.git")
                     url.set("https://github.com/platacard/PagerIndicator")
+                    connection.set("scm:git://github.com/platacard/PagerIndicator.git")
+                    developerConnection.set("scm:git://github.com/platacard/PagerIndicator.git")
                 }
+            }
+
+            afterEvaluate {
+                from(components["release"])
             }
         }
     }
     repositories {
         maven {
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = stringProperty("mavenCentralUsername")
-                password = stringProperty("mavenCentralPassword")
-            }
+            setUrl(layout.buildDirectory.dir("staging-deploy"))
         }
     }
 }
 
-signing {
-    val keyFile = project.findProperty("signing.secretKeyFile") as String?
-    val keyId = project.findProperty("signing.keyId") as String?
-    val password = project.findProperty("signing.password") as String?
-
-
-    if (keyFile != null && keyId != null && password != null) {
-        val secretKey = Files.readString(file(keyFile).toPath())
-        useInMemoryPgpKeys(keyId, secretKey, password)
-        sign(publishing.publications)
+jreleaser {
+    project {
+        inceptionYear = "2024"
+        author("@shpasha")
+    }
+    gitRootSearch = true
+    signing {
+        active = Active.ALWAYS
+        armored = true
+        verify = true
+    }
+    release {
+        github {
+            skipTag = true
+            sign = true
+            branch = "main"
+            branchPush = "main"
+            overwrite = true
+        }
+    }
+    deploy {
+        maven {
+            mavenCentral.create("sonatype") {
+                active = Active.ALWAYS
+                url = "https://central.sonatype.com/api/v1/publisher"
+                stagingRepository(layout.buildDirectory.dir("staging-deploy").get().toString())
+                setAuthorization("Basic")
+                applyMavenCentralRules =
+                    false // Wait for fix: https://github.com/kordamp/pomchecker/issues/21
+                sign = true
+                checksums = true
+                sourceJar = true
+                javadocJar = true
+                retryDelay = 60
+            }
+        }
     }
 }
-
-val release: Boolean get() = hasProperty("release")
-
-fun stringProperty(propertyName: String) = findProperty(propertyName) as String?

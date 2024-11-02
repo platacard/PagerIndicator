@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "dif.tech.pagerindicator"
+    namespace = "mx.platacard.sample"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "dif.tech.pagerindicator.demo"
+        applicationId = "mx.platacard.pagerindicator.sample"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

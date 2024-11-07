@@ -13,6 +13,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import mx.platacard.pagerindicator.PagerIndicatorOrientation.Horizontal
 import kotlinx.coroutines.launch
+import mx.platacard.pagerindicator.internal.CirclePainter
+import mx.platacard.pagerindicator.internal.PagerIndicatorInternal
+import mx.platacard.pagerindicator.internal.onDotClick
 
 enum class PagerIndicatorOrientation {
     Horizontal,

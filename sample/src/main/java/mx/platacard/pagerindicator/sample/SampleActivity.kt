@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import mx.platacard.pagerindicator.PagerIndicator
 import mx.platacard.pagerindicator.PagerIndicatorOrientation
 import mx.platacard.pagerindicator.PagerWormIndicator
-import mx.platacard.sample.R
 
 class SampleActivity : AppCompatActivity() {
 

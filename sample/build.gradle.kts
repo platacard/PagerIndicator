@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "mx.platacard.sample"
+    namespace = "mx.platacard.pagerindicator.sample"
     compileSdk = 34
 
     defaultConfig {

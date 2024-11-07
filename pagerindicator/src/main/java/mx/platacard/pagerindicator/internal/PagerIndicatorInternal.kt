@@ -1,4 +1,4 @@
-package mx.platacard.pagerindicator
+package mx.platacard.pagerindicator.internal
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import mx.platacard.pagerindicator.PagerIndicatorOrientation
 import mx.platacard.pagerindicator.PagerIndicatorOrientation.*
 import kotlin.math.roundToInt
 

@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.dp
 import mx.platacard.pagerindicator.PagerIndicatorOrientation.Horizontal
 import mx.platacard.pagerindicator.PagerIndicatorOrientation.Vertical
 import kotlinx.coroutines.launch
+import mx.platacard.pagerindicator.internal.PagerIndicatorInternal
+import mx.platacard.pagerindicator.internal.onDotClick
+import mx.platacard.pagerindicator.internal.warmLinePosAsState
 
 /**
  * A simple pager indicator that displays dots for each page in the pager.

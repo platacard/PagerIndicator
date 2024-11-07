@@ -1,4 +1,4 @@
-package mx.platacard.pagerindicator
+package mx.platacard.pagerindicator.internal
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color

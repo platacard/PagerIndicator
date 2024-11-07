@@ -1,4 +1,4 @@
-package mx.platacard.pagerindicator
+package mx.platacard.pagerindicator.internal
 
 internal fun calculateDrawableDotIndices(
     dotCount: Int,

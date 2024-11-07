@@ -1,5 +1,4 @@
 import org.jreleaser.model.Active
-import java.nio.file.Files
 
 plugins {
     alias(libs.plugins.android.library)

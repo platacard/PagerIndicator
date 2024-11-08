@@ -1,23 +1,22 @@
 package mx.platacard.pagerindicator.internal
 
-internal fun calculateDrawableDotIndices(
+internal fun calculateVisibleDotIndices(
     dotCount: Int,
     currentPage: Int,
     pageCount: Int,
 ): Pair<Int, Int> {
 
-    val onTheSidesDotCount = dotCount / 2
-
     val firstVisible: Int
     val lastVisible: Int
 
     if (currentPage < pageCount / 2) {
-        firstVisible = (currentPage - onTheSidesDotCount).coerceAtLeast(0)
-        lastVisible = (firstVisible + onTheSidesDotCount * 2)
+        firstVisible = (currentPage - dotCount / 2).coerceAtLeast(0)
+        lastVisible = (firstVisible + (dotCount - 1))
     } else {
-        lastVisible = (currentPage + onTheSidesDotCount).coerceAtMost(pageCount - 1)
-        firstVisible = (lastVisible - onTheSidesDotCount * 2)
+        lastVisible = (currentPage + dotCount / 2).coerceAtMost(pageCount - 1)
+        firstVisible = (lastVisible - (dotCount - 1))
     }
+
     return firstVisible to lastVisible
 }
 
@@ -30,7 +29,7 @@ internal fun calculateTargetDotSizeForPage(
 
     val onTheSidesDotCount = dotCount / 2
 
-    val (firstVisible, lastVisible) = calculateDrawableDotIndices(
+    val (firstVisible, lastVisible) = calculateVisibleDotIndices(
         dotCount = dotCount,
         currentPage = currentPage,
         pageCount = pageCount,

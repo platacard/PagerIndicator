@@ -51,7 +51,10 @@ internal fun PagerIndicatorInternal(
     onAfterDraw: DrawScope.() -> Unit = {},
 ) {
 
-    val adjustedDotCount = minOf(dotCount, pageCount)
+    val adjustedDotCount = when {
+        dotCount >= pageCount -> pageCount
+        else -> if (dotCount % 2 == 0) dotCount - 1 else dotCount
+    }
 
     val density = LocalDensity.current
 
@@ -94,28 +97,18 @@ internal fun PagerIndicatorInternal(
             .height(if (orientation == Horizontal) activeDotSize else mainAxisSize)
     ) {
 
-        val centerDot = pageCount / 2
-
         val pagerFraction = currentPageFraction.value
-        val pagesFromCenter = pagerFraction - centerDot
 
-        val additionalOffset = if (pageCount % 2 == 0 && adjustedDotCount != pageCount) 1 else 0
+        val itemsCount = (pagerFraction - adjustedDotCount / 2)
+            .coerceIn(
+                minimumValue = 0f,
+                maximumValue = pageCount - adjustedDotCount.toFloat(),
+            )
 
-        val mainAxisCenterX = if (orientation == Horizontal) center.x else center.y
+        val scroll = -itemsCount * (dotSizePx + spacePx)
 
-        val firstItemStart = mainAxisCenterX - (pageCount / 2f + additionalOffset) * dotSizePx -
-                ((pageCount - 1 - additionalOffset) / 2f) * spacePx
-
-        val scroll = when {
-            adjustedDotCount == pageCount -> 0f
-            else -> -pagesFromCenter.coerceIn(
-                minimumValue = (adjustedDotCount / 2 - centerDot).toFloat(),
-                maximumValue = (-adjustedDotCount / 2 + centerDot - additionalOffset).toFloat(),
-            ) * (dotSizePx + spacePx)
-        } + firstItemStart
-
-        val (firstVisible, lastVisible) = calculateDrawableDotIndices(
-            dotCount = dotCount,
+        val (firstVisible, lastVisible) = calculateVisibleDotIndices(
+            dotCount = adjustedDotCount,
             currentPage = pagerFraction.roundToInt(),
             pageCount = pageCount,
         ).let { (first, second) ->
@@ -189,7 +182,7 @@ internal fun Modifier.onDotClick(
 ): Modifier {
     return this.pointerInput(Unit) {
         detectTapGestures { offset ->
-            val (start, stop) = calculateDrawableDotIndices(
+            val (start, stop) = calculateVisibleDotIndices(
                 dotCount = dotCount,
                 currentPage = currentPageFraction.value.roundToInt(),
                 pageCount = pageCount,

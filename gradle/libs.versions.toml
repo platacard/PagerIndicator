@@ -2,7 +2,7 @@
 agp = "8.7.1"
 kotlin = "2.0.21"
 appcompat = "1.7.0"
-compose = "1.7.5"
+compose = "1.7.4"
 activity = "1.9.3"
 
 [libraries]

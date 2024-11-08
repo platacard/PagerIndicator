@@ -29,10 +29,8 @@ import mx.platacard.pagerindicator.internal.warmLinePosAsState
  * @param activeDotColor Color of the active dot.
  * @param dotColor Color of the inactive dots.
  * @param dotCount Number of dots to display.
- * @param dotPainter Painter to use for drawing the dots.
- * @param dotNormalSize Size of the inactive dots.
- * @param dotSelectedSize Size of the active dot.
- * @param dotMinSize Size of the dot displayed on the edge
+ * @param activeDotSize Size of the active dot.
+ * @param minDotSize Size of the dot displayed on the edge
  * @param space Space between the dots.
  * @param orientation Orientation of the pager.
  */
@@ -40,8 +38,8 @@ import mx.platacard.pagerindicator.internal.warmLinePosAsState
 fun PagerWormIndicator(
     pagerState: PagerState,
     modifier: Modifier = Modifier,
-    dotSelectedSize: Dp = 8.dp,
-    dotMinSize: Dp = 4.dp,
+    activeDotSize: Dp = 8.dp,
+    minDotSize: Dp = 4.dp,
     space: Dp = 8.dp,
     dotCount: Int = 5,
     activeDotColor: Color,
@@ -59,8 +57,8 @@ fun PagerWormIndicator(
             }
         },
         modifier = modifier,
-        dotSelectedSize = dotSelectedSize,
-        dotMinSize = dotMinSize,
+        activeDotSize = activeDotSize,
+        minDotSize = minDotSize,
         space = space,
         dotCount = dotCount,
         activeDotColor = activeDotColor,
@@ -80,9 +78,8 @@ fun PagerWormIndicator(
  * @param activeDotColor Color of the active dot.
  * @param dotColor Color of the inactive dots.
  * @param dotCount Number of dots to display.
- * @param dotNormalSize Size of the inactive dots.
- * @param dotSelectedSize Size of the active dot.
- * @param dotMinSize Size of the dot displayed on the edge
+ * @param activeDotSize Size of the active dot.
+ * @param minDotSize Size of the dot displayed on the edge
  * @param space Space between the dots.
  * @param orientation Orientation of the pager.
  * @param onDotClick Callback when a dot is clicked.
@@ -92,8 +89,8 @@ fun PagerWormIndicator(
     pageCount: Int,
     currentPageFraction: State<Float>,
     modifier: Modifier = Modifier,
-    dotSelectedSize: Dp = 8.dp,
-    dotMinSize: Dp = 4.dp,
+    activeDotSize: Dp = 8.dp,
+    minDotSize: Dp = 4.dp,
     space: Dp = 8.dp,
     dotCount: Int = 5,
     activeDotColor: Color,
@@ -105,7 +102,7 @@ fun PagerWormIndicator(
     val warmLinePos = warmLinePosAsState(currentPageFraction)
 
     val density = LocalDensity.current
-    val dotSizePx = with(density) { dotSelectedSize.toPx() }
+    val dotSizePx = with(density) { activeDotSize.toPx() }
     val spacePx = with(density) { space.toPx() }
 
     PagerIndicatorInternal(
@@ -121,9 +118,9 @@ fun PagerWormIndicator(
         activeDotColor = dotColor,
         dotColor = dotColor,
         dotCount = dotCount,
-        dotNormalSize = dotSelectedSize,
-        dotSelectedSize = dotSelectedSize,
-        dotMinSize = dotMinSize,
+        normalDotSize = activeDotSize,
+        activeDotSize = activeDotSize,
+        minDotSize = minDotSize,
         space = space,
         orientation = orientation,
         onAfterDraw = {

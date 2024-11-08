@@ -43,9 +43,9 @@ internal fun PagerIndicatorInternal(
     dotColor: Color,
     dotPainter: Painter = CirclePainter,
     dotCount: Int = 5,
-    dotNormalSize: Dp = 6.dp,
-    dotSelectedSize: Dp = 8.dp,
-    dotMinSize: Dp = 4.dp,
+    normalDotSize: Dp = 6.dp,
+    activeDotSize: Dp = 8.dp,
+    minDotSize: Dp = 4.dp,
     space: Dp = 8.dp,
     orientation: PagerIndicatorOrientation = Horizontal,
     onAfterDraw: DrawScope.() -> Unit = {},
@@ -55,9 +55,9 @@ internal fun PagerIndicatorInternal(
 
     val density = LocalDensity.current
 
-    val dotMinSizePx = with(density) { dotMinSize.toPx() }
-    val dotNormalSizePx = with(density) { dotNormalSize.toPx() }
-    val dotSizePx = with(density) { dotSelectedSize.toPx() }
+    val dotMinSizePx = with(density) { minDotSize.toPx() }
+    val dotNormalSizePx = with(density) { normalDotSize.toPx() }
+    val dotSizePx = with(density) { activeDotSize.toPx() }
 
     val spacePx = with(density) { space.toPx() }
 
@@ -86,12 +86,12 @@ internal fun PagerIndicatorInternal(
         }
     }
 
-    val mainAxisSize = dotSelectedSize * adjustedDotCount + space * (adjustedDotCount - 1)
+    val mainAxisSize = activeDotSize * adjustedDotCount + space * (adjustedDotCount - 1)
 
     Canvas(
         modifier = modifier
-            .width(if (orientation == Horizontal) mainAxisSize else dotSelectedSize)
-            .height(if (orientation == Horizontal) dotSelectedSize else mainAxisSize)
+            .width(if (orientation == Horizontal) mainAxisSize else activeDotSize)
+            .height(if (orientation == Horizontal) activeDotSize else mainAxisSize)
     ) {
 
         val centerDot = pageCount / 2

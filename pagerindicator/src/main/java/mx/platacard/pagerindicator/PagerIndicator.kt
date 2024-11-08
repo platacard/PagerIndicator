@@ -31,9 +31,9 @@ enum class PagerIndicatorOrientation {
  * @param dotColor Color of the inactive dots.
  * @param dotCount Number of dots to display.
  * @param dotPainter Painter to use for drawing the dots.
- * @param dotNormalSize Size of the inactive dots.
- * @param dotSelectedSize Size of the active dot.
- * @param dotMinSize Size of the dot displayed on the edge
+ * @param normalDotSize Size of the inactive dots.
+ * @param activeDotSize Size of the active dot.
+ * @param minDotSize Size of the dot displayed on the edge
  * @param space Space between the dots.
  * @param orientation Orientation of the pager.
  */
@@ -45,9 +45,9 @@ fun PagerIndicator(
     dotColor: Color,
     dotCount: Int = 5,
     dotPainter: Painter = CirclePainter,
-    dotNormalSize: Dp = 6.dp,
-    dotSelectedSize: Dp = 8.dp,
-    dotMinSize: Dp = 4.dp,
+    normalDotSize: Dp = 6.dp,
+    activeDotSize: Dp = 8.dp,
+    minDotSize: Dp = 4.dp,
     space: Dp = 8.dp,
     orientation: PagerIndicatorOrientation = Horizontal,
 ) {
@@ -64,9 +64,9 @@ fun PagerIndicator(
         },
         dotPainter = dotPainter,
         dotCount = dotCount,
-        dotNormalSize = dotNormalSize,
-        dotSelectedSize = dotSelectedSize,
-        dotMinSize = dotMinSize,
+        normalDotSize = normalDotSize,
+        activeDotSize = activeDotSize,
+        minDotSize = minDotSize,
         space = space,
         activeDotColor = activeDotColor,
         dotColor = dotColor,
@@ -85,9 +85,9 @@ fun PagerIndicator(
  * @param dotColor Color of the inactive dots.
  * @param dotCount Number of dots to display.
  * @param dotPainter Painter to use for drawing the dots.
- * @param dotNormalSize Size of the inactive dots.
- * @param dotSelectedSize Size of the active dot.
- * @param dotMinSize Size of the dot displayed on the edge
+ * @param normalDotSize Size of the inactive dots.
+ * @param activeDotSize Size of the active dot.
+ * @param minDotSize Size of the dot displayed on the edge
  * @param space Space between the dots.
  * @param orientation Orientation of the pager.
  * @param onDotClick Lambda that is called when a dot is clicked.
@@ -101,9 +101,9 @@ fun PagerIndicator(
     modifier: Modifier = Modifier,
     dotPainter: Painter = CirclePainter,
     dotCount: Int = 5,
-    dotNormalSize: Dp = 6.dp,
-    dotSelectedSize: Dp = 8.dp,
-    dotMinSize: Dp = 4.dp,
+    normalDotSize: Dp = 6.dp,
+    activeDotSize: Dp = 8.dp,
+    minDotSize: Dp = 4.dp,
     space: Dp = 8.dp,
     orientation: PagerIndicatorOrientation = Horizontal,
     onDotClick: (Int) -> Unit = {},
@@ -122,9 +122,9 @@ fun PagerIndicator(
         dotColor = dotColor,
         dotPainter = dotPainter,
         dotCount = dotCount,
-        dotNormalSize = dotNormalSize,
-        dotSelectedSize = dotSelectedSize,
-        dotMinSize = dotMinSize,
+        normalDotSize = normalDotSize,
+        activeDotSize = activeDotSize,
+        minDotSize = minDotSize,
         space = space,
         orientation = orientation,
     )

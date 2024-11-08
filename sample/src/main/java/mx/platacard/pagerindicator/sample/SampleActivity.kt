@@ -88,9 +88,9 @@ private fun HorizontalPagerSample() {
         PagerIndicator(
             pagerState = pagerState,
             activeDotColor = Color.Blue,
-            dotNormalSize = 8.dp,
-            dotSelectedSize = 12.dp,
-            dotMinSize = 4.dp,
+            normalDotSize = 8.dp,
+            activeDotSize = 12.dp,
+            minDotSize = 4.dp,
             dotColor = Color.Gray,
         )
 
@@ -100,8 +100,8 @@ private fun HorizontalPagerSample() {
                 derivedStateOf { pagerState.currentPage + pagerState.currentPageOffsetFraction }
             },
             activeDotColor = Color.Blue,
-            dotSelectedSize = 12.dp,
-            dotMinSize = 4.dp,
+            activeDotSize = 12.dp,
+            minDotSize = 4.dp,
             dotColor = Color.Gray,
         )
     }
@@ -148,9 +148,9 @@ private fun VerticalPagerSample() {
         PagerIndicator(
             pagerState = pagerState,
             activeDotColor = Color.Blue,
-            dotNormalSize = 10.dp,
-            dotSelectedSize = 14.dp,
-            dotMinSize = 6.dp,
+            normalDotSize = 10.dp,
+            activeDotSize = 14.dp,
+            minDotSize = 6.dp,
             dotColor = Color.Gray,
             orientation = PagerIndicatorOrientation.Vertical,
             dotPainter = painterResource(R.drawable.ic_16_star),
@@ -160,8 +160,8 @@ private fun VerticalPagerSample() {
         PagerWormIndicator(
             pagerState = pagerState,
             activeDotColor = Color.Blue,
-            dotSelectedSize = 12.dp,
-            dotMinSize = 4.dp,
+            activeDotSize = 12.dp,
+            minDotSize = 4.dp,
             orientation = PagerIndicatorOrientation.Vertical,
             dotColor = Color.Gray,
         )

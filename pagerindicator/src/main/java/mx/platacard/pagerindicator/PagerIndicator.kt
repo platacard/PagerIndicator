@@ -26,9 +26,9 @@ enum class PagerIndicatorOrientation {
  * A simple pager indicator that displays dots for each page in the pager.
  *
  * @param pagerState The [PagerState] that this indicator should represent.
- * @param modifier Modifier to apply to the layout.
  * @param activeDotColor Color of the active dot.
  * @param dotColor Color of the inactive dots.
+ * @param modifier Modifier to apply to the layout.
  * @param dotCount Number of dots to display.
  * @param dotPainter Painter to use for drawing the dots.
  * @param normalDotSize Size of the inactive dots.
@@ -40,9 +40,9 @@ enum class PagerIndicatorOrientation {
 @Composable
 fun PagerIndicator(
     pagerState: PagerState,
-    modifier: Modifier = Modifier,
     activeDotColor: Color,
     dotColor: Color,
+    modifier: Modifier = Modifier,
     dotCount: Int = 5,
     dotPainter: Painter = CirclePainter,
     normalDotSize: Dp = 6.dp,
@@ -80,9 +80,9 @@ fun PagerIndicator(
  *
  * @param pageCount The number of pages in the pager.
  * @param currentPageFraction A lambda that returns the fraction [0, pageCount] of the current page based on the scrolling position
- * @param modifier Modifier to apply to the layout.
  * @param activeDotColor Color of the active dot.
  * @param dotColor Color of the inactive dots.
+ * @param modifier Modifier to apply to the layout.
  * @param dotCount Number of dots to display.
  * @param dotPainter Painter to use for drawing the dots.
  * @param normalDotSize Size of the inactive dots.

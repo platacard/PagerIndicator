@@ -25,9 +25,9 @@ import mx.platacard.pagerindicator.internal.wormLinePosAsState
  * The transition between pages is animated in the style of a worm.
  *
  * @param pagerState The [PagerState] that this indicator should represent.
- * @param modifier Modifier to apply to the layout.
  * @param activeDotColor Color of the active dot.
  * @param dotColor Color of the inactive dots.
+ * @param modifier Modifier to apply to the layout.
  * @param dotCount Number of dots to display.
  * @param activeDotSize Size of the active dot.
  * @param minDotSize Size of the dot displayed on the edge
@@ -37,13 +37,13 @@ import mx.platacard.pagerindicator.internal.wormLinePosAsState
 @Composable
 fun PagerWormIndicator(
     pagerState: PagerState,
+    activeDotColor: Color,
+    dotColor: Color,
     modifier: Modifier = Modifier,
     activeDotSize: Dp = 8.dp,
     minDotSize: Dp = 4.dp,
     space: Dp = 8.dp,
     dotCount: Int = 5,
-    activeDotColor: Color,
-    dotColor: Color,
     orientation: PagerIndicatorOrientation = Horizontal,
 ) {
 
@@ -74,9 +74,9 @@ fun PagerWormIndicator(
  *
  * @param pageCount The total number of pages in the pager.
  * @param currentPageFraction The fraction of the current page.
- * @param modifier Modifier to apply to the layout.
  * @param activeDotColor Color of the active dot.
  * @param dotColor Color of the inactive dots.
+ * @param modifier Modifier to apply to the layout.
  * @param dotCount Number of dots to display.
  * @param activeDotSize Size of the active dot.
  * @param minDotSize Size of the dot displayed on the edge
@@ -88,13 +88,13 @@ fun PagerWormIndicator(
 fun PagerWormIndicator(
     pageCount: Int,
     currentPageFraction: State<Float>,
+    activeDotColor: Color,
+    dotColor: Color,
     modifier: Modifier = Modifier,
     activeDotSize: Dp = 8.dp,
     minDotSize: Dp = 4.dp,
     space: Dp = 8.dp,
     dotCount: Int = 5,
-    activeDotColor: Color,
-    dotColor: Color,
     orientation: PagerIndicatorOrientation = Horizontal,
     onDotClick: (Int) -> Unit = {},
 ) {

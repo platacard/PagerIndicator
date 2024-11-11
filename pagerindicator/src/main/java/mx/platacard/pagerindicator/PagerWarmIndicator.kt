@@ -18,7 +18,7 @@ import mx.platacard.pagerindicator.PagerIndicatorOrientation.Vertical
 import kotlinx.coroutines.launch
 import mx.platacard.pagerindicator.internal.PagerIndicatorInternal
 import mx.platacard.pagerindicator.internal.onDotClick
-import mx.platacard.pagerindicator.internal.warmLinePosAsState
+import mx.platacard.pagerindicator.internal.wormLinePosAsState
 
 /**
  * A simple pager indicator that displays dots for each page in the pager.
@@ -99,7 +99,7 @@ fun PagerWormIndicator(
     onDotClick: (Int) -> Unit = {},
 ) {
 
-    val warmLinePos = warmLinePosAsState(currentPageFraction)
+    val wormLinePos = wormLinePosAsState(currentPageFraction)
 
     val density = LocalDensity.current
     val dotSizePx = with(density) { activeDotSize.toPx() }
@@ -125,8 +125,8 @@ fun PagerWormIndicator(
         orientation = orientation,
         onAfterDraw = {
 
-            val lineStart = warmLinePos.value.first * (dotSizePx + spacePx)
-            val lineEnd = warmLinePos.value.second * (dotSizePx + spacePx)
+            val lineStart = wormLinePos.value.first * (dotSizePx + spacePx)
+            val lineEnd = wormLinePos.value.second * (dotSizePx + spacePx)
 
             val lineStartX = when (orientation) {
                 Horizontal -> lineStart + dotSizePx / 2f

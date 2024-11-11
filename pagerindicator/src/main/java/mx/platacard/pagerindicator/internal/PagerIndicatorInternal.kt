@@ -201,7 +201,7 @@ internal fun Modifier.onDotClick(
 }
 
 @Composable
-internal fun warmLinePosAsState(
+internal fun wormLinePosAsState(
     currentPageFraction: State<Float>,
 ): State<Pair<Float, Float>> {
     return remember {

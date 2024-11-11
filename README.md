@@ -34,7 +34,7 @@ Add the library to your project by including it in your Gradle dependencies.
 
 ```gradle
 dependencies {
-    implementation("mx.platacard:compose-pager-indicator:0.0.7")
+    implementation("mx.platacard:compose-pager-indicator:$latestRelease")
 }
 ```
 

@@ -10,11 +10,11 @@ This library provides a simple and customizable pager indicator for Android apps
 
 ### PagerWormIndicator
 
-![Pager Indicator Demo](assets/wam_pager_indicator_horizontal.gif)
+![Pager Indicator Demo](assets/worm_pager_indicator_horizontal.gif)
 
 ### Pager & PagerWormIndicator vertical
 
-![Pager Indicator Demo](assets/wam_pager_indicator_horizontal.gif)
+![Pager Indicator Demo](assets/pager_indicator_vertical.gif)
 
 ## Features
 

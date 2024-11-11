@@ -12,7 +12,7 @@ This library provides a simple and customizable pager indicator for Android apps
 
 ![Pager Indicator Demo](assets/worm_pager_indicator_horizontal.gif)
 
-### Pager & PagerWormIndicator vertical
+### PagerIndicator & PagerWormIndicator vertical
 
 ![Pager Indicator Demo](assets/pager_indicator_vertical.gif)
 
@@ -34,7 +34,7 @@ Add the library to your project by including it in your Gradle dependencies.
 
 ```gradle
 dependencies {
-    implementation "mx.platacard:compose-pager-indicator:0.0.7"
+    implementation("mx.platacard:compose-pager-indicator:0.0.7")
 }
 ```
 
@@ -98,7 +98,9 @@ If you're not using a traditional pager but still want an indicator for a custom
 ```kotlin
 PagerIndicator(
     pageCount = 10,
-    currentPageFraction = derivedStateOf { /* Your logic to calculate fractional page position */ },
+    currentPageFraction = remember {
+        derivedStateOf { /* Your logic to calculate fractional page position */ } 
+    },
     activeDotColor = Color.Blue,
     dotColor = Color.Gray,
     dotCount = 5

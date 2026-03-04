@@ -96,6 +96,25 @@ private fun HorizontalPagerSample() {
             dotColor = Color.Gray,
         )
 
+        val starResource = painterResource(R.drawable.ic_16_star)
+        val giftResource = painterResource(R.drawable.ic_16_gift)
+
+        PagerIndicator(
+            pagerState = pagerState,
+            activeDotColor = Color.Blue,
+            normalDotSize = 8.dp,
+            activeDotSize = 12.dp,
+            minDotSize = 4.dp,
+            dotColor = Color.Gray,
+            dotPainter = { i ->
+                if (i % 2 == 0) {
+                    giftResource
+                } else {
+                    starResource
+                }
+            }
+        )
+
         PagerWormIndicator(
             pageCount = pagerState.pageCount,
             currentPageFraction = remember {
@@ -147,6 +166,9 @@ private fun VerticalPagerSample() {
             }
         }
 
+        val starResource = painterResource(R.drawable.ic_16_star)
+        val giftResource = painterResource(R.drawable.ic_16_gift)
+
         PagerIndicator(
             pagerState = pagerState,
             activeDotColor = Color.Blue,
@@ -155,7 +177,13 @@ private fun VerticalPagerSample() {
             minDotSize = 6.dp,
             dotColor = Color.Gray,
             orientation = PagerIndicatorOrientation.Vertical,
-            dotPainter = painterResource(R.drawable.ic_16_star),
+            dotPainter = { i ->
+                if (i % 2 == 0) {
+                    giftResource
+                } else {
+                    starResource
+                }
+            }
         )
 
 

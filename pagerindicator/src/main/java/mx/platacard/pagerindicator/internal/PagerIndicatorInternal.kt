@@ -41,7 +41,7 @@ internal fun PagerIndicatorInternal(
     modifier: Modifier = Modifier,
     activeDotColor: Color,
     dotColor: Color,
-    dotPainter: Painter = CirclePainter,
+    dotPainter: (Int) -> Painter = { CirclePainter },
     dotCount: Int = 5,
     normalDotSize: Dp = 6.dp,
     activeDotSize: Dp = 8.dp,
@@ -142,7 +142,7 @@ internal fun PagerIndicatorInternal(
                 val left = if (orientation == Horizontal) mainAxisStart else crossAxisStart
                 val top = if (orientation == Horizontal) crossAxisStart else mainAxisStart
 
-                with(dotPainter) {
+                with(dotPainter(i)) {
                     translate(
                         left = left,
                         top = top,

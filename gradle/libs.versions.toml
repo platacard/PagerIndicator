@@ -1,12 +1,17 @@
 [versions]
-agp = "8.7.1"
-kotlin = "2.0.21"
+agp = "8.7.3"
+commonsCodec = "1.16.1"
+commonsCompress = "1.26.0"
+kotlin = "2.1.0"
 appcompat = "1.7.0"
-compose = "1.7.4"
+compose = "1.7.6"
 activity = "1.9.3"
+jreleaser = "1.15.0"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+commons-codec = { module = "commons-codec:commons-codec", version.ref = "commonsCodec" }
+commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commonsCompress" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -16,5 +21,6 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+org-jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
 
 

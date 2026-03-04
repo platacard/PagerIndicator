@@ -62,6 +62,44 @@ fun PagerIndicator(
                 pagerState.currentPage + pagerState.currentPageOffsetFraction
             }
         },
+        dotPainter = { dotPainter },
+        dotCount = dotCount,
+        normalDotSize = normalDotSize,
+        activeDotSize = activeDotSize,
+        minDotSize = minDotSize,
+        space = space,
+        activeDotColor = activeDotColor,
+        dotColor = dotColor,
+        orientation = orientation,
+        onDotClick = { scope.launch { pagerState.animateScrollToPage(it, 0f) } },
+    )
+}
+
+@Composable
+fun PagerIndicator(
+    pagerState: PagerState,
+    activeDotColor: Color,
+    dotColor: Color,
+    modifier: Modifier = Modifier,
+    dotCount: Int = 5,
+    dotPainter: (Int) -> Painter,
+    normalDotSize: Dp = 6.dp,
+    activeDotSize: Dp = 8.dp,
+    minDotSize: Dp = 4.dp,
+    space: Dp = 8.dp,
+    orientation: PagerIndicatorOrientation = Horizontal,
+) {
+
+    val scope = rememberCoroutineScope()
+
+    PagerIndicator(
+        modifier = modifier,
+        pageCount = pagerState.pageCount,
+        currentPageFraction = remember {
+            derivedStateOf {
+                pagerState.currentPage + pagerState.currentPageOffsetFraction
+            }
+        },
         dotPainter = dotPainter,
         dotCount = dotCount,
         normalDotSize = normalDotSize,
@@ -100,6 +138,44 @@ fun PagerIndicator(
     dotColor: Color,
     modifier: Modifier = Modifier,
     dotPainter: Painter = CirclePainter,
+    dotCount: Int = 5,
+    normalDotSize: Dp = 6.dp,
+    activeDotSize: Dp = 8.dp,
+    minDotSize: Dp = 4.dp,
+    space: Dp = 8.dp,
+    orientation: PagerIndicatorOrientation = Horizontal,
+    onDotClick: (Int) -> Unit = {},
+) {
+    PagerIndicatorInternal(
+        pageCount = pageCount,
+        currentPageFraction = currentPageFraction,
+        modifier = modifier.onDotClick(
+            dotCount = dotCount,
+            pageCount = pageCount,
+            currentPageFraction = currentPageFraction,
+            onClick = onDotClick,
+            orientation = orientation,
+        ),
+        activeDotColor = activeDotColor,
+        dotColor = dotColor,
+        dotPainter = { dotPainter },
+        dotCount = dotCount,
+        normalDotSize = normalDotSize,
+        activeDotSize = activeDotSize,
+        minDotSize = minDotSize,
+        space = space,
+        orientation = orientation,
+    )
+}
+
+@Composable
+fun PagerIndicator(
+    pageCount: Int,
+    currentPageFraction: State<Float>,
+    activeDotColor: Color,
+    dotColor: Color,
+    modifier: Modifier = Modifier,
+    dotPainter: (Int) -> Painter,
     dotCount: Int = 5,
     normalDotSize: Dp = 6.dp,
     activeDotSize: Dp = 8.dp,

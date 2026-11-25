@@ -34,6 +34,14 @@ internal enum class DotState {
     Invisible,
 }
 
+/**
+ * @param activeDotMainSize Size of the active dot along the main axis, [activeDotSize] is its cross axis size.
+ * @param packed If `false`, every dot takes a slot of [activeDotSize] and the window is scrolled.
+ * If `true`, dots take as much space as they need, hidden dots take none, and the visible group is centered.
+ * @param dotState State of the dot [i] when the [currentPage] is selected.
+ * @param onDrawDot Called after the dot of the [page] is drawn. `selection` is 1 for the selected dot,
+ * 0 for the others and in between while the pager is scrolled.
+ */
 @Composable
 internal fun PagerIndicatorInternal(
     pageCount: Int,
@@ -48,6 +56,10 @@ internal fun PagerIndicatorInternal(
     minDotSize: Dp = 4.dp,
     space: Dp = 8.dp,
     orientation: PagerIndicatorOrientation = Horizontal,
+    activeDotMainSize: Dp = activeDotSize,
+    packed: Boolean = false,
+    dotState: ((i: Int, currentPage: Int, pageCount: Int, dotCount: Int) -> DotState) = ::calculateTargetDotSizeForPage,
+    onDrawDot: (DrawScope.(page: Int, topLeft: Offset, size: Size, selection: Float) -> Unit)? = null,
     onAfterDraw: DrawScope.() -> Unit = {},
 ) {
 
@@ -61,25 +73,45 @@ internal fun PagerIndicatorInternal(
     val dotMinSizePx = with(density) { minDotSize.toPx() }
     val dotNormalSizePx = with(density) { normalDotSize.toPx() }
     val dotSizePx = with(density) { activeDotSize.toPx() }
+    val dotMainSizePx = with(density) { activeDotMainSize.toPx() }
 
     val spacePx = with(density) { space.toPx() }
 
     fun calculateTargetDotStateForPage(i: Int, page: Int): DotState {
-        return calculateTargetDotSizeForPage(
-            i = i,
-            currentPage = page,
-            pageCount = pageCount,
-            dotCount = adjustedDotCount,
-        )
+        return dotState(i, page, pageCount, adjustedDotCount)
     }
 
+    // Size across the main axis.
     fun DotState.size(): Float {
         return when (this) {
             DotState.Selected -> dotSizePx
             DotState.Normal -> dotNormalSizePx
             DotState.SmallEdge -> dotMinSizePx
-            DotState.Invisible -> 0f
+            // A packed hidden dot keeps its size and fades out instead of shrinking.
+            DotState.Invisible -> if (packed) dotMinSizePx else 0f
         }
+    }
+
+    // Size along the main axis.
+    fun DotState.mainSize(): Float {
+        return if (this == DotState.Selected) dotMainSizePx else size()
+    }
+
+    // Space that the dot takes along the main axis.
+    fun DotState.slot(): Float {
+        return when {
+            !packed -> dotSizePx
+            this == DotState.Invisible -> 0f
+            else -> mainSize()
+        }
+    }
+
+    fun DotState.space(): Float {
+        return if (packed && this == DotState.Invisible) 0f else spacePx
+    }
+
+    fun DotState.alpha(): Float {
+        return if (packed && this == DotState.Invisible) 0f else 1f
     }
 
     fun DotState.color(): Color {
@@ -89,7 +121,11 @@ internal fun PagerIndicatorInternal(
         }
     }
 
-    val mainAxisSize = activeDotSize * adjustedDotCount + space * (adjustedDotCount - 1)
+    val mainAxisSize = if (packed) {
+        activeDotMainSize + (normalDotSize + space) * (adjustedDotCount - 1)
+    } else {
+        activeDotSize * adjustedDotCount + space * (adjustedDotCount - 1)
+    }
 
     Canvas(
         modifier = modifier
@@ -105,8 +141,6 @@ internal fun PagerIndicatorInternal(
                 maximumValue = pageCount - adjustedDotCount.toFloat(),
             )
 
-        val scroll = -itemsCount * (dotSizePx + spacePx)
-
         val (firstVisible, lastVisible) = calculateVisibleDotIndices(
             dotCount = adjustedDotCount,
             currentPage = pagerFraction.roundToInt(),
@@ -115,32 +149,70 @@ internal fun PagerIndicatorInternal(
             (first - 1).coerceAtLeast(0) to (second + 1).coerceAtMost(pageCount - 1)
         }
 
+        val pagerFractionInt = pagerFraction.toInt()
+        val scrollFraction = pagerFraction - pagerFractionInt
+
+        val scroll = if (packed) {
+            // Center the visible group.
+            var groupSize = -spacePx
+            for (i in firstVisible..lastVisible) {
+                val current = calculateTargetDotStateForPage(i, page = pagerFractionInt)
+                val future = calculateTargetDotStateForPage(i, page = pagerFractionInt + 1)
+                groupSize += lerp(
+                    current.slot() + current.space(),
+                    future.slot() + future.space(),
+                    scrollFraction,
+                )
+            }
+            val canvasMainSize = if (orientation == Horizontal) size.width else size.height
+            (canvasMainSize - groupSize) / 2f
+        } else {
+            -itemsCount * (dotSizePx + spacePx)
+        }
+
         translate(
             left = if (orientation == Horizontal) scroll else 0f,
             top = if (orientation == Vertical) scroll else 0f,
         ) {
 
+            var packedDotStart = 0f
+
             for (i in firstVisible..lastVisible) {
-
-                val dotStart = i * (dotSizePx + spacePx)
-
-                val pagerFractionInt = pagerFraction.toInt()
-                val scrollFraction = pagerFraction - pagerFractionInt
 
                 val currentDotState = calculateTargetDotStateForPage(i, page = pagerFractionInt)
                 val futureDotState = calculateTargetDotStateForPage(i, page = pagerFractionInt + 1)
 
+                val slot = lerp(currentDotState.slot(), futureDotState.slot(), scrollFraction)
+                val dotStart = if (packed) packedDotStart else i * (dotSizePx + spacePx)
+                packedDotStart += slot +
+                    lerp(currentDotState.space(), futureDotState.space(), scrollFraction)
+
                 val targetDotSize =
                     lerp(currentDotState.size(), futureDotState.size(), scrollFraction)
+                val targetDotMainSize =
+                    lerp(currentDotState.mainSize(), futureDotState.mainSize(), scrollFraction)
+                val targetDotAlpha =
+                    lerp(currentDotState.alpha(), futureDotState.alpha(), scrollFraction)
                 val targetDotColor =
                     lerp(currentDotState.color(), futureDotState.color(), scrollFraction)
-                val dotColorFilter = ColorFilter.tint(targetDotColor)
+                val dotColorFilter = ColorFilter.tint(
+                    if (targetDotAlpha == 1f) {
+                        targetDotColor
+                    } else {
+                        targetDotColor.copy(alpha = targetDotColor.alpha * targetDotAlpha)
+                    }
+                )
 
-                val mainAxisStart = dotStart + dotSizePx / 2f - targetDotSize / 2f
+                val mainAxisStart = dotStart + slot / 2f - targetDotMainSize / 2f
                 val crossAxisStart = dotSizePx / 2f - targetDotSize / 2f
 
                 val left = if (orientation == Horizontal) mainAxisStart else crossAxisStart
                 val top = if (orientation == Horizontal) crossAxisStart else mainAxisStart
+                val dotSize = if (orientation == Horizontal) {
+                    Size(targetDotMainSize, targetDotSize)
+                } else {
+                    Size(targetDotSize, targetDotMainSize)
+                }
 
                 with(dotPainter(i)) {
                     translate(
@@ -149,13 +221,13 @@ internal fun PagerIndicatorInternal(
                     ) {
                         if (intrinsicSize == Size.Unspecified) {
                             draw(
-                                size = Size(targetDotSize, targetDotSize),
+                                size = dotSize,
                                 colorFilter = dotColorFilter,
                             )
                         } else {
                             scale(
-                                scaleX = targetDotSize / intrinsicSize.width,
-                                scaleY = targetDotSize / intrinsicSize.height,
+                                scaleX = dotSize.width / intrinsicSize.width,
+                                scaleY = dotSize.height / intrinsicSize.height,
                                 pivot = Offset(0f, 0f),
                             ) {
                                 draw(
@@ -165,6 +237,15 @@ internal fun PagerIndicatorInternal(
                             }
                         }
                     }
+                }
+
+                if (onDrawDot != null) {
+                    val selection = lerp(
+                        if (currentDotState == DotState.Selected) 1f else 0f,
+                        if (futureDotState == DotState.Selected) 1f else 0f,
+                        scrollFraction,
+                    )
+                    onDrawDot(i, Offset(left, top), dotSize, selection)
                 }
 
                 onAfterDraw()

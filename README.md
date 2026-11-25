@@ -16,11 +16,16 @@ This library provides a simple and customizable pager indicator for Android apps
 
 ![Pager Indicator Demo](assets/pager_indicator_vertical.gif)
 
+### PagerTimerIndicator
+
+![Pager Timer Indicator Demo](assets/pager_timer_indicator_horizontal.gif)
+
 ## Features
 
-- **Two Indicator Types**:
+- **Three Indicator Types**:
     - **Pager Worm Indicator** - A dynamic "worm-like" animation that visually represents the transition between pages.
     - **Pager Dot Indicator** - A standard dot indicator for simpler paging needs.
+    - **Pager Timer Indicator** - For auto-advancing carousels (stories, onboarding, promo banners): the active page is a timer that fills up while the slide is shown.
 - **Customizable**:
     - Set the colors, sizes, and spacing of the dots.
     - Choose between horizontal and vertical orientations.
@@ -90,6 +95,40 @@ fun MyPagerIndicator(pagerState: PagerState) {
 | `minDotSize`           | Size of dots displayed at the edges.                                                                      |
 | `space`                | Space between dots.                                                                                       |
 | `orientation`          | `Horizontal` or `Vertical` orientation of the indicator.                                                  |
+
+## PagerTimerIndicator
+
+Use it for content that switches automatically. `rememberPagerTimerState` drives the progress and scrolls the pager to the next page when the timer is full.
+
+```kotlin
+val pagerState = rememberPagerState { slides.size }
+val timerState = rememberPagerTimerState(
+    pagerState = pagerState,
+    slideDuration = 6.seconds,
+    endBehavior = PagerTimerEndBehavior.Loop, // or Stop at 100% on the last slide
+)
+
+Box {
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.pauseOnPress(timerState), // press and hold pauses the timer
+    ) { page -> Slide(slides[page]) }
+
+    PagerTimerIndicator(
+        pagerState = pagerState,
+        timerState = timerState,
+        modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+    )
+}
+```
+
+- Progress is linear and restarts from 0% on every page change, including a manual swipe.
+- The timer pauses while the pager is scrolled, the content is pressed, the app is in background, or `timerState.isPaused` is `true` (use it while the slide is loading or a bottom sheet is open).
+- When a screen reader (TalkBack) is on, the pager is not advanced automatically.
+- Up to `dotCount` (5 by default) elements are visible: the timer, 6dp neighbours and 4dp edge dots. With a single page nothing is drawn.
+- Draw it on dark or media backgrounds only: everything is drawn with `color` (white by default), inactive dots and the timer track with 30% opacity.
+
+For custom state, use the overload with `pageCount`, `currentPageFraction` and `progress: () -> Float`.
 
 ## Using a Custom `currentPageFraction`
 

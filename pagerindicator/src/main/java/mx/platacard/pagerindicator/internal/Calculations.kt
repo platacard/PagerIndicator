@@ -93,7 +93,8 @@ internal fun calculateCenteredDotStateForPage(
 
     return when {
         distance == 0 -> DotState.Selected
-        pageCount <= 3 || distance < onTheSidesDotCount -> DotState.Normal
+        // A small pager shows all its dots, but only when the window has room for them.
+        (pageCount <= 3 && pageCount <= dotCount) || distance < onTheSidesDotCount -> DotState.Normal
         distance == onTheSidesDotCount -> DotState.SmallEdge
         else -> DotState.Invisible
     }

@@ -81,8 +81,18 @@ class PagerTimerState internal constructor(
 
     private var elapsedNanos = 0L
 
+    // The page the progress belongs to, it follows the target page of the pager.
+    private var timedPage = pagerState.targetPage
+
+    // The last settled page and its progress at the moment the pager started to leave it.
+    private var settledPage = pagerState.settledPage
+    private var settledElapsedNanos = 0L
+    private var settledProgress = 0f
+
+    // An empty pager has no slide to time.
     private val isHeld: Boolean
-        get() = isPaused || isPressed || isScreenReaderOn || pagerState.isScrollInProgress
+        get() = isPaused || isPressed || isScreenReaderOn || pagerState.isScrollInProgress ||
+            pagerState.pageCount == 0
 
     /** Starts the progress of the current slide from 0. */
     fun restart() {
@@ -92,16 +102,45 @@ class PagerTimerState internal constructor(
 
     internal suspend fun run() = coroutineScope {
         launch {
-            snapshotFlow { pagerState.targetPage }.collect { restart() }
+            snapshotFlow { pagerState.targetPage to pagerState.settledPage }.collect { (target, settled) ->
+                onPageChanged(target, settled)
+            }
         }
         launch {
             snapshotFlow { !isHeld && progress < 1f }.collectLatest { running ->
                 if (running) tick()
             }
         }
-        // Keyed by the end behavior too: switching Stop -> Loop on a finished last slide must advance.
-        snapshotFlow { if (!isHeld && progress >= 1f) endBehavior else null }.collect { finished ->
+        // Keyed by the end behavior and the page count too: switching Stop -> Loop or adding a page
+        // on a finished last slide must advance.
+        snapshotFlow {
+            if (!isHeld && progress >= 1f) endBehavior to pagerState.pageCount else null
+        }.collect { finished ->
             if (finished != null) advance()
+        }
+    }
+
+    // A drag towards a neighbour changes the target page before anything settles. The progress of
+    // the settled page is kept, so a drag that snaps back continues it instead of starting over.
+    private fun onPageChanged(target: Int, settled: Int) {
+        if (settled != settledPage) {
+            settledPage = settled
+            settledElapsedNanos = 0L
+            settledProgress = 0f
+        }
+        if (target == timedPage) return
+
+        if (timedPage == settledPage) {
+            settledElapsedNanos = elapsedNanos
+            settledProgress = progress
+        }
+        timedPage = target
+        // A finished slide starts over, otherwise coming back to it would advance at once.
+        if (target == settledPage && settledProgress < 1f) {
+            elapsedNanos = settledElapsedNanos
+            progress = settledProgress
+        } else {
+            restart()
         }
     }
 
@@ -110,8 +149,9 @@ class PagerTimerState internal constructor(
         while (progress < 1f) {
             val frame = withFrameNanos { it }
             // A long gap between frames means nothing was drawn (e.g. the app was in background),
-            // that time must not count.
-            elapsedNanos += (frame - lastFrame).coerceAtMost(MaxFrameGapNanos)
+            // none of that time counts: the frame only becomes the new baseline.
+            val gap = frame - lastFrame
+            if (gap <= MaxFrameGapNanos) elapsedNanos += gap
             lastFrame = frame
             val duration = slideDuration(pagerState.targetPage).inWholeNanoseconds.coerceAtLeast(1L)
             progress = (elapsedNanos.toDouble() / duration).toFloat().coerceAtMost(1f)

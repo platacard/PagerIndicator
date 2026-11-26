@@ -75,3 +75,26 @@ internal fun calculateTargetDotSizeForPage(
     }
 }
 
+
+/**
+ * The selected dot is surrounded by normal dots, the dots on the edge of the window are small,
+ * the rest are hidden. Unlike [calculateTargetDotSizeForPage], the window is always centered on
+ * the selected dot, so on the first and the last pages fewer dots are visible.
+ */
+internal fun calculateCenteredDotStateForPage(
+    i: Int,
+    currentPage: Int,
+    pageCount: Int,
+    dotCount: Int,
+): DotState {
+
+    val onTheSidesDotCount = dotCount / 2
+    val distance = kotlin.math.abs(i - currentPage)
+
+    return when {
+        distance == 0 -> DotState.Selected
+        pageCount <= 3 || distance < onTheSidesDotCount -> DotState.Normal
+        distance == onTheSidesDotCount -> DotState.SmallEdge
+        else -> DotState.Invisible
+    }
+}

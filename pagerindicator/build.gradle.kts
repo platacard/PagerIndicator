@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
-    id("org.jreleaser") version "1.15.0"
+    alias(libs.plugins.org.jreleaser)
     `maven-publish`
     signing
 }
@@ -12,12 +12,12 @@ plugins {
 // https://github.com/GoogleContainerTools/jib/issues/4235
 buildscript {
     dependencies {
-        classpath("commons-codec:commons-codec:1.16.1")
+        classpath(libs.commons.codec)
     }
     configurations.all {
         resolutionStrategy {
-            force("org.apache.commons:commons-compress:1.26.0")
-            force("commons-codec:commons-codec:1.16.1")
+            force(libs.commons.compress)
+            force(libs.commons.codec)
         }
     }
 }
